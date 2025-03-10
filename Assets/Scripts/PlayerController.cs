@@ -13,6 +13,7 @@ public class PlayerController : MonoBehaviour
     public float speed = 3.0f;
 
 
+
     // Variables related to the health system
     public int maxHealth = 5;
     int currentHealth;
@@ -34,8 +35,11 @@ public class PlayerController : MonoBehaviour
 
     AudioSource audioSource;
     public AudioClip hitClip;
+    public AudioClip stepClip;
 
     public InputAction talkAction;
+
+    bool audioSourceActive;
 
     // Start is called before the first frame update
     void Start()
@@ -48,6 +52,7 @@ public class PlayerController : MonoBehaviour
         currentHealth = maxHealth;
 
         audioSource = GetComponent<AudioSource>();
+        audioSourceActive = false;
     }
 
     // Update is called once per frame
@@ -60,14 +65,19 @@ public class PlayerController : MonoBehaviour
         {
             moveDirection.Set(move.x, move.y);
             moveDirection.Normalize();
-            audioSource.Play();
+            audioSourceActive = true;
+            if(!audioSource.isPlaying) {audioSource.Play();}
+
 
         }
-        else 
+        else
         {
-            audioSource.Pause();
+            //audioSource.Pause();
+            audioSourceActive = false;
+            audioSource.Stop();
         }
 
+        
 
         animator.SetFloat("Look X", moveDirection.x);
         animator.SetFloat("Look Y", moveDirection.y);
@@ -92,43 +102,45 @@ public class PlayerController : MonoBehaviour
     {
         Vector2 position = (Vector2)rigidbody2d.position + move * speed * Time.deltaTime;
         rigidbody2d.MovePosition(position);
+        
     }
 
-
-    public void ChangeHealth(int amount)
-    {
-        if (amount < 0)
+        public void ChangeHealth(int amount)
         {
-            if (isInvincible)
-                return;
+            if (amount < 0)
+            {
+                if (isInvincible)
+                    return;
 
-            isInvincible = true;
-            damageCooldown = timeInvincible;
-            animator.SetTrigger("Hit");
-            PlaySound(hitClip);
+                isInvincible = true;
+                damageCooldown = timeInvincible;
+                animator.SetTrigger("Hit");
+                PlaySound(hitClip);
+            }
+
+
+            currentHealth = Mathf.Clamp(currentHealth + amount, 0, maxHealth);
+            UIHandler.instance.SetHealthValue(currentHealth / (float)maxHealth);
+
+
         }
 
-
-        currentHealth = Mathf.Clamp(currentHealth + amount, 0, maxHealth);
-        UIHandler.instance.SetHealthValue(currentHealth / (float)maxHealth);
-
-
-    }
-
-    void Launch()
-    {
-        GameObject projectileObject = Instantiate(projectilePrefab, rigidbody2d.position + Vector2.up * 0.5f, Quaternion.identity);
-        Projectile projectile = projectileObject.GetComponent<Projectile>();
-        projectile.Launch(moveDirection, 300);
+        void Launch()
+        {
+            GameObject projectileObject = Instantiate(projectilePrefab, rigidbody2d.position + Vector2.up * 0.5f, Quaternion.identity);
+            Projectile projectile = projectileObject.GetComponent<Projectile>();
+            projectile.Launch(moveDirection, 300);
 
 
-        animator.SetTrigger("Launch");
+            animator.SetTrigger("Launch");
 
 
-    }
+        }
 
-    public void PlaySound(AudioClip clip)
-    {
-        audioSource.PlayOneShot(clip);
-    }
+        public void PlaySound(AudioClip clip)
+        {
+            audioSource.PlayOneShot(clip);
+        }
+
+        
 }
