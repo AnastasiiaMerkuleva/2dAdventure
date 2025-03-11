@@ -8,7 +8,7 @@ public class Projectile : MonoBehaviour
 
     
 
-    // Awake is called when the Projectile GameObject is instantiated
+    
     void Awake()
     {
         rigidbody2d = GetComponent<Rigidbody2D>();
