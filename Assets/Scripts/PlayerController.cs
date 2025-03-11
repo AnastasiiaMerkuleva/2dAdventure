@@ -6,7 +6,7 @@ using UnityEngine.InputSystem;
 public class PlayerController : MonoBehaviour
 {
 
-    // Variables related to player character movement
+    
     public InputAction MoveAction;
     Rigidbody2D rigidbody2d;
     Vector2 move;
@@ -14,19 +14,19 @@ public class PlayerController : MonoBehaviour
 
 
 
-    // Variables related to the health system
+ 
     public int maxHealth = 5;
     int currentHealth;
     public int health { get { return currentHealth; } }
 
 
-    // Variables related to temporary invincibility
+   
     public float timeInvincible = 2.0f;
     bool isInvincible;
     float damageCooldown;
 
 
-    // Variables related to animation
+   
     Animator animator;
     Vector2 moveDirection = new Vector2(1, 0);
 
@@ -41,7 +41,7 @@ public class PlayerController : MonoBehaviour
 
     bool audioSourceActive;
 
-    // Start is called before the first frame update
+  
     void Start()
     {
         MoveAction.Enable();
@@ -55,7 +55,7 @@ public class PlayerController : MonoBehaviour
         audioSourceActive = false;
     }
 
-    // Update is called once per frame
+
     void Update()
     {
         move = MoveAction.ReadValue<Vector2>();
@@ -97,7 +97,7 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    // FixedUpdate has the same call rate as the physics system
+    
     void FixedUpdate()
     {
         Vector2 position = (Vector2)rigidbody2d.position + move * speed * Time.deltaTime;
